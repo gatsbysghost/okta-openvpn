@@ -157,11 +157,11 @@ class OktaAPIAuth(object):
               }
         url = "{base}/api/v1{path}".format(base=self.okta_url, path=path)
         req = self.pool.urlopen(
-              'GET',
-              url,
+              method='GET',
+              url=url,
               headers=headers
         )
-        return json.loads(data)
+        return json.loads(req.data)
 
     def preauth(self):
         path = "/authn"
