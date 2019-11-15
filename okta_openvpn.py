@@ -147,6 +147,22 @@ class OktaAPIAuth(object):
         )
         return json.loads(req.data)
 
+    def okta_get(self, path):
+        ssws = "SSWS {token}".format(token=self.okta_token)
+        headers = {
+              'user-agent': user_agent,
+              'content-type': 'application/json',
+              'accept': 'application/json',
+              'authorization': ssws,
+              }
+        url = "{base}/api/v1{path}".format(base=self.okta_url, path=path)
+        req = self.pool.urlopen(
+              'GET',
+              url,
+              headers=headers
+        )
+        return json.loads(data)
+
     def preauth(self):
         path = "/authn"
         data = {
@@ -167,7 +183,7 @@ class OktaAPIAuth(object):
     def user_info(self):
         path = "/api/v1/users/" + self.username
         data = {}
-        return self.okta_req(path, data)
+        return self.okta_get(path)
 
     def auth(self):
         username = self.username
