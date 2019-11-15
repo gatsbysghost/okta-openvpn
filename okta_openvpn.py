@@ -164,6 +164,11 @@ class OktaAPIAuth(object):
         }
         return self.okta_req(path, data)
 
+    def user_info(self):
+        path = "/api/v1/users/" + self.username
+        data = {}
+        return self.okta_req(path, data)
+
     def auth(self):
         username = self.username
         password = self.password
@@ -210,10 +215,11 @@ class OktaAPIAuth(object):
         elif status == "MFA_REQUIRED" or status == "MFA_CHALLENGE":
             log.info("Checking for 'vpnUser' attribute in %s Okta user profile",
                      self.username)
-            if 'vpnUser' in rv['_embedded']['user']['profile']:
+            user_info = self.user_info()
+            if 'vpnUser' in user_info['profile']:
                 log.info("'vpnUser' attribute found in %s Okta profile; checking if user is allowed to use VPN",
                          self.username)
-                if rv['_embedded']['user']['profile']['vpnUser'] != 'yes':
+                if user_info['profile']['vpnUser'] != 'yes':
                     log.error("User %s does not have 'vpnUser' == 'yes' in their Okta profile",
                               self.username)
                     return False
