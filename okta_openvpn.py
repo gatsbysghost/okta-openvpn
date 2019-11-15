@@ -208,6 +208,20 @@ class OktaAPIAuth(object):
             log.info('User %s needs to enroll first', self.username)
             return False
         elif status == "MFA_REQUIRED" or status == "MFA_CHALLENGE":
+            log.info("Checking for 'vpnUser' attribute in %s Okta user profile",
+                     self.username)
+            if 'vpnUser' in rv['_embedded']['user']['profile']:
+                log.info("'vpnUser' attribute found in %s Okta profile; checking if user is allowed to use VPN",
+                         self.username)
+                if rv['_embedded']['user']['profile']['vpnUser'] != 'yes':
+                    log.error("User %s does not have 'vpnUser' == 'yes' in their Okta profile",
+                              self.username)
+                    return False
+                else:
+                    log.info("User %s is authorized to use VPN in Okta", self.username)
+            else:
+                log.error("User %s Okta profile does not have 'vpnUser' attribute", self.username)
+                return False
             log.debug("User %s password validates, checking second factor",
                       self.username)
             res = None
