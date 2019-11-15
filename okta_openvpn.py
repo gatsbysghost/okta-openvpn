@@ -181,8 +181,7 @@ class OktaAPIAuth(object):
         return self.okta_req(path, data)
 
     def user_info(self):
-        path = "/api/v1/users/" + self.username
-        data = {}
+        path = "/users/{}".format(self.username)
         return self.okta_get(path)
 
     def auth(self):
